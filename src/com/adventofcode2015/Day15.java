@@ -69,22 +69,32 @@ public class Day15 {
         List<List<Integer>> combinations = new ArrayList<>();
         spoonCombinations(ingredients.size(), 100, new ArrayList<>(), combinations);
 
-        List<Integer> winningRecipe = null;
-        int lastSum = 0;
+        List<Integer> winningRecipePart1 = null;
+        List<Integer> winningRecipePart2 = null;
+        int lastSumPart1 = 0;
+        int lastSumPart2 = 0;
 
         for (List<Integer> spoonCombination : combinations){
             int sum = Math.max(0, ingredients.stream().mapToInt(ingredient -> ingredient.capacity * spoonCombination.get(ingredients.indexOf(ingredient))).sum()) *
                     Math.max(0, ingredients.stream().mapToInt(ingredient -> ingredient.durability * spoonCombination.get(ingredients.indexOf(ingredient))).sum()) *
                     Math.max(0, ingredients.stream().mapToInt(ingredient -> ingredient.flavor * spoonCombination.get(ingredients.indexOf(ingredient))).sum()) *
                     Math.max(0, ingredients.stream().mapToInt(ingredient -> ingredient.texture * spoonCombination.get(ingredients.indexOf(ingredient))).sum());
-            if(sum > lastSum){
-                lastSum = sum;
-                winningRecipe = spoonCombination;
+            int calories = ingredients.stream().mapToInt(ingredient -> ingredient.calories * spoonCombination.get(ingredients.indexOf(ingredient))).sum();
+            if(sum > lastSumPart1){
+                lastSumPart1 = sum;
+                winningRecipePart1 = spoonCombination;
+            }
+            if(calories == 500 && sum > lastSumPart2){
+                lastSumPart2 = sum;
+                winningRecipePart2 = spoonCombination;
             }
         }
 
-        System.out.println("The highest-scoring cookie scores " + lastSum);
-        System.out.println("The winning-recipe is " + winningRecipe);
+        System.out.println("The highest-scoring cookie for part 1 scores " + lastSumPart1);
+        System.out.println("The winning-recipe for part 1 is " + winningRecipePart1);
+
+        System.out.println("The highest-scoring cookie for part 2 scores " + lastSumPart2);
+        System.out.println("The winning-recipe for part 2 is " + winningRecipePart2);
 
     }
 
