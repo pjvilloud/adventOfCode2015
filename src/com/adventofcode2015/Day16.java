@@ -539,7 +539,37 @@ public class Day16 {
                     continue mainLoop;
                 }
             }
-            System.out.println("The Sue number is " + sueNumber);
+            System.out.println("The Sue number for part 1 is " + sueNumber);
+        }
+
+        mainLoop2:
+        for (String line : input.split("\n")) {
+            int sueNumber = Integer.parseInt(line.substring(4, line.indexOf(":")));
+            String[] compounds = line.substring(line.indexOf(":") + 1).split(", ");
+            for (String compound : compounds){
+                String[] compoundTerms = compound.split(":");
+                String name = compoundTerms[0].strip();
+                Integer value = Integer.parseInt(compoundTerms[1].strip());
+
+                switch (name) {
+                    case "cats", "trees" -> {
+                        if (mapFromMessage.get(name) >= value) {
+                            continue mainLoop2;
+                        }
+                    }
+                    case "pomeranians", "goldfish" -> {
+                        if (mapFromMessage.get(name) <= value) {
+                            continue mainLoop2;
+                        }
+                    }
+                    default -> {
+                        if (!mapFromMessage.get(name).equals(value)) {
+                            continue mainLoop2;
+                        }
+                    }
+                }
+            }
+            System.out.println("The Sue number for part 2 is " + sueNumber);
         }
     }
 }
