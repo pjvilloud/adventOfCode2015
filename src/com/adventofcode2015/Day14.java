@@ -1,5 +1,10 @@
 package com.adventofcode2015;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
 public class Day14 {
     static String input = """
             Vixen can fly 8 km/s for 8 seconds, but then must rest for 53 seconds.
@@ -22,14 +27,35 @@ public class Day14 {
     public static void main(String[] args) {
 
         double maxDistance = 0;
+
+        class Reindeer {
+            public final String name;
+            public final double speed;
+            public final double sprintDuration;
+            public final double restDuration;
+            public double distanceSoFar = 0;
+            public int points = 0;
+
+            public Reindeer(String name, double speed, double sprintDuration, double restDuration) {
+                this.name = name;
+                this.speed = speed;
+                this.sprintDuration = sprintDuration;
+                this.restDuration = restDuration;
+            }
+        }
+
+        List<Reindeer> reindeers = new ArrayList<>();
         String winner = null;
 
         for(String line : input.split("\n")){
+
             String[] words = line.split(" ");
             String name = words[0];
             double speed = Double.parseDouble(words[3]);
             double sprintDuration = Double.parseDouble(words[6]);
             double restDuration = Double.parseDouble(words[13]);
+
+            reindeers.add(new Reindeer(name, speed, sprintDuration, restDuration));
 
             double nbOfCycles = duration.doubleValue() / (sprintDuration + restDuration);
             double nbOfSpeedCycles = Math.floor(nbOfCycles);
@@ -43,6 +69,23 @@ public class Day14 {
             }
         }
         System.out.println("The winner is " + winner + ", he traveled " + maxDistance + " km");
+
+        for (int i = 0; i < duration; i++){
+            for (Reindeer reindeer : reindeers) {
+                if(i % (reindeer.restDuration + reindeer.sprintDuration) < reindeer.sprintDuration ){
+                    reindeer.distanceSoFar += reindeer.speed;
+                }
+            }
+
+            Optional<Double> max = reindeers.stream().map(reindeer -> reindeer.distanceSoFar).max(Double::compareTo);
+            max.ifPresent(aDouble ->
+                    reindeers.stream().
+                            filter(reindeer -> reindeer.distanceSoFar == max.get()).
+                            forEach(reindeer -> reindeer.points++));
+        }
+
+        Optional<Reindeer> winnerReindeer = reindeers.stream().max(Comparator.comparingDouble(o -> o.points));
+        winnerReindeer.ifPresent(reindeer -> System.out.println("The winner is " + reindeer.name + " with " + reindeer.points + " points"));
 
     }
 
